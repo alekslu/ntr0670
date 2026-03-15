@@ -1,4 +1,5 @@
 output/*
+!output/images/testimage*.png
 
 __pycache__/
 *.py[cod]

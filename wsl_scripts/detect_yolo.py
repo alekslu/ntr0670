@@ -7,7 +7,7 @@ import cv2
 from ultralytics import YOLO
 
 
-DEFAULT_BALL_CLASSES = ["sports ball", "frisbee", "orange", "apple", "baseball"]
+DEFAULT_BALL_CLASSES = ["sports ball"]
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 _OUTPUT_DIR = _REPO_ROOT / "output"
@@ -34,8 +34,8 @@ def parse_args() -> argparse.Namespace:
         default=",".join(DEFAULT_BALL_CLASSES),
         help="Comma-separated YOLO classes to treat as ball",
     )
-    parser.add_argument("--conf-person", type=float, default=0.35, help="Confidence threshold for person (default: 0.35)")
-    parser.add_argument("--conf-ball", type=float, default=0.03, help="Confidence threshold for ball (default: 0.03)")
+    parser.add_argument("--conf-person", type=float, default=0.50, help="Confidence threshold for person (default: 0.50)")
+    parser.add_argument("--conf-ball", type=float, default=0.25, help="Confidence threshold for ball (default: 0.25)")
     parser.add_argument("--iou", type=float, default=0.45, help="NMS IoU threshold (default: 0.45)")
     parser.add_argument("--save-annotated", default=None, help="Annotated output image path for single-image mode")
     parser.add_argument("--annotated-dir", default=str(_ANNOTATED_DIR), help="Annotated output directory for batch mode")
@@ -60,10 +60,17 @@ def to_int_box(box: list[float]) -> tuple[int, int, int, int]:
     return int(x1), int(y1), int(x2), int(y2)
 
 
-def draw_box(image, box: list[float], label: str, color: tuple[int, int, int]) -> None:
+def draw_box(
+    image,
+    box: list[float],
+    label: str,
+    color: tuple[int, int, int],
+    text_inside: bool = False,
+) -> None:
     x1, y1, x2, y2 = to_int_box(box)
     cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
-    cv2.putText(image, label, (x1, max(y1 - 8, 0)), cv2.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
+    text_y = min(y1 + 18, max(y2 - 6, 0)) if text_inside else max(y1 - 8, 0)
+    cv2.putText(image, label, (x1, text_y), cv2.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
 
 
 def analyze_image(result: Any, image_path: Path, args: argparse.Namespace, annotated_path: Path) -> dict[str, Any] | None:
@@ -129,7 +136,7 @@ def analyze_image(result: Any, image_path: Path, args: argparse.Namespace, annot
                     "source": "person_bbox_top_region",
                 }
             )
-            draw_box(source_img, head_box, "head_estimate", (80, 180, 255))
+            draw_box(source_img, head_box, "head_estimate", (80, 180, 255), text_inside=True)
 
     annotated_path.parent.mkdir(parents=True, exist_ok=True)
     cv2.imwrite(str(annotated_path), source_img)

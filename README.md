@@ -5,7 +5,7 @@
 Rakendus teeb USB kaameraga pildi ja tuvastab sellelt automaatselt:
 - **inimesed** (YOLO klass `person`)
 - **pead** (hinnanguline — inimese bounding box ülemine 35%)
-- **pallid** (YOLO klassid `sports ball` ja `frisbee`)
+- **pallid** (YOLO klass `sports ball`)
 
 Pildid salvestatakse kausta `output/images/` ja failinimega `image_ppkkaaaa_tt_mm_ss.png` (nt `image_15032026_18_42_07.png`).
 Tuvastuse koondtulemus salvestatakse `output/analysis/detections_all.json` ja margendatud pildid kausta `output/analysis/annotated/`.
@@ -114,7 +114,7 @@ python wsl_scripts/detect_yolo.py --image output/images/image_15032026_18_42_07.
 
 Märkused:
 - `person` — YOLO klass person
-- `ball` — YOLO klassid sports ball või frisbee (pall varjutud keha ees tuvastatakse tihti frisbee-na)
+- `ball` — YOLO klass sports ball
 - `head_estimate` — inimese bbox ülemine 35%, mitte eraldi peamudel
 
 ## Run full pipeline (capture + detect)
@@ -134,17 +134,17 @@ python wsl_scripts/capture_and_detect.py --model yolov8l.pt
 ## Tuvastuse lävede muutmine
 
 Vaikimisi läviväärtused:
-- `--conf-person 0.35` — inimene tuvastatakse kui konfidents ≥ 35%
-- `--conf-ball 0.03` — pall tuvastatakse kui konfidents ≥ 3%
+- `--conf-person 0.50` — inimene tuvastatakse kui konfidents ≥ 50%
+- `--conf-ball 0.25` — pall tuvastatakse kui konfidents ≥ 25%
 
 Kui pall jääb tuvastamata (kaetud käega), proovi madalama palliläve või suurema mudeliga:
 ```bash
-python wsl_scripts/detect_yolo.py --conf-ball 0.05 --model yolov8s.pt
+python wsl_scripts/detect_yolo.py --conf-ball 0.10 --model yolov8s.pt
 ```
 
 Kui tuvastatakse liiga palju valesid objekte, tõsta läve:
 ```bash
-python wsl_scripts/detect_yolo.py --conf-person 0.5 --conf-ball 0.15
+python wsl_scripts/detect_yolo.py --conf-person 0.6 --conf-ball 0.40
 ```
 
 Debug vaade kõigi toortuvastustega:
