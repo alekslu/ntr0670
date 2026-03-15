@@ -1,4 +1,5 @@
 import subprocess
+from datetime import datetime
 from pathlib import Path
 
 
@@ -12,11 +13,24 @@ def wsl_to_windows_path(path: Path) -> str:
     return result.stdout.strip()
 
 
+def next_capture_path(images_dir: Path) -> Path:
+    base = datetime.now().strftime("image_%d%m%Y_%H_%M_%S")
+    candidate = images_dir / f"{base}.png"
+    suffix = 2
+    while candidate.exists():
+        candidate = images_dir / f"{base}_{suffix}.png"
+        suffix += 1
+    return candidate
+
+
 def main() -> int:
     repo_root = Path(__file__).resolve().parents[1]
     win_script_wsl = repo_root / "windows_scripts" / "camera_win.py"
     output_dir_wsl = repo_root / "output"
-    output_file_wsl = output_dir_wsl / "webcam.png"
+    images_dir_wsl = output_dir_wsl / "images"
+
+    images_dir_wsl.mkdir(parents=True, exist_ok=True)
+    output_file_wsl = next_capture_path(images_dir_wsl)
 
     output_dir_wsl.mkdir(parents=True, exist_ok=True)
 
