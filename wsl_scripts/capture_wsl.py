@@ -1,4 +1,3 @@
-import argparse
 import subprocess
 from pathlib import Path
 
@@ -13,19 +12,11 @@ def wsl_to_windows_path(path: Path) -> str:
     return result.stdout.strip()
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run Windows webcam capture from WSL.")
-    parser.add_argument("--cam-index", type=int, default=0, help="OpenCV camera index")
-    parser.add_argument("--filename", default="webcam.png", help="Output filename under output/")
-    return parser.parse_args()
-
-
 def main() -> int:
-    args = parse_args()
     repo_root = Path(__file__).resolve().parents[1]
     win_script_wsl = repo_root / "windows_scripts" / "camera_win.py"
     output_dir_wsl = repo_root / "output"
-    output_file_wsl = output_dir_wsl / args.filename
+    output_file_wsl = output_dir_wsl / "webcam.png"
 
     output_dir_wsl.mkdir(parents=True, exist_ok=True)
 
@@ -35,8 +26,6 @@ def main() -> int:
     cmd = [
         "python.exe",
         win_script,
-        "--cam-index",
-        str(args.cam_index),
         "--output",
         output_file,
     ]
