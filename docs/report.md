@@ -10,15 +10,15 @@ colorlinks: true
 
 # 1. Grupi liikmed ja repositoorium
 
-| Nimi | Roll |
-|---|---|
-| A. Luik | Arendaja |
+| Nimi 
+| A. Luik 
 
 **Repositooriumid:**
 - <https://gitlab.cs.ttu.ee/alluik/ntr0670>
+
 - <https://github.com/alekslu/ntr0670/>
 
-Kogu lähtekood, konfiguratsioon ja väljundfailid asuvad Git-repoos ülaltoodud aadressil.
+Kogu lähtekood, konfiguratsioon ja väljundfailid asuvad Git repositooriumis ülaltoodud aadressitel.
 
 \newpage
 
